@@ -1,0 +1,31 @@
+.basic-tile {
+    -fx-fill: slateblue;
+    -fx-stroke: slategray;
+    -fx-stroke-width: 1;
+    -fx-stroke-type: inside;
+}
+
+.basic-tile:hover {
+    -fx-fill: slategray;
+}
+
+.basic-tile:pressed {
+    -fx-fill: seagreen;
+}
+
+.path-tile {
+    -fx-fill: lightgray;
+}
+
+.blocked-tile {
+    -fx-fill: salmon;
+}
+
+.tower-base {
+    -fx-fill: lightgray;
+    -fx-stroke: dimgray;
+    -fx-stroke-width: 3;
+    -fx-stroke-type: centered;
+    -fx-arc-width: 10;
+    -fx-arc-height: 10;
+}

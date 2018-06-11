@@ -4,13 +4,11 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import main.effects.Projectile;
+import main.effects.Effect;
 import main.towers.Tower;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static main.Tile.TILE_SIZE;
@@ -26,7 +24,7 @@ public class Level {
     private ObservableList<Node> visuals;
     private List<Tower> towers;
     private List<Enemy> enemies;
-    private List<Projectile> projectiles;
+    private List<Effect> effects;
     private List<Tile> path;
 
     public Level(InputStream input) {
@@ -42,25 +40,22 @@ public class Level {
 
         gameArea = new Pane(tileVisuals);
         visuals = gameArea.getChildren();
-
         towers = new CopyOnWriteArrayList<>();
-//        Tile t = tiles[3][5];
-//        spawnTower(new TurretTower(t.getX(), t.getY(), this));
-//        t = tiles[3][12];
-//        spawnTower(new BombTower(t.getX(), t.getY(), this));
-
         enemies = new CopyOnWriteArrayList<>();
-
-        projectiles = new CopyOnWriteArrayList<>();
+        effects = new CopyOnWriteArrayList<>();
     }
 
     public void update() {
         towers.forEach(Tower::update);
         enemies.forEach(Enemy::update);
-        projectiles.forEach(Projectile::update);
+        effects.forEach(Effect::update);
     }
 
-    public void render(Node n) {
+    public void renderBottom(Node n) {
+        visuals.add(1, n);
+    }
+
+    public void renderTop(Node n) {
         visuals.add(n);
     }
 
@@ -70,30 +65,35 @@ public class Level {
 
     public void spawnTower(Tower t) {
         towers.add(t);
-        visuals.add(t.getVisual());
+        renderBottom(t.getVisual());
+    }
+
+    public void clearTower(Tower t) {
+        towers.remove(t);
+        unrender(t.getVisual());
     }
 
     public void spawnEnemy(EnemyType type) {
         Enemy e = new Enemy(type, this);
         enemies.add(e);
-        visuals.add(e.getVisual());
-        visuals.add(e.getHealthBar());
+        renderBottom(e.getVisual());
+        renderTop(e.getHealthBar());
     }
 
     public void clearEnemy(Enemy e) {
         enemies.remove(e);
-        visuals.remove(e.getVisual());
-        visuals.remove(e.getHealthBar());
+        unrender(e.getVisual());
+        unrender(e.getHealthBar());
     }
 
-    public void spawnProjectile(Projectile p) {
-        projectiles.add(p);
-        visuals.add(p.getVisual());
+    public void spawnEffect(Effect p) {
+        effects.add(p);
+        renderBottom(p.getVisual());
     }
 
-    public void clearProjectile(Projectile p) {
-        projectiles.remove(p);
-        visuals.remove(p.getVisual());
+    public void clearEffect(Effect p) {
+        effects.remove(p);
+        unrender(p.getVisual());
     }
 
     public Pane getGameArea() {
@@ -108,8 +108,14 @@ public class Level {
         return enemies;
     }
 
-    public List<Projectile> getProjectiles() {
-        return projectiles;
+    public List<Effect> getEffects() {
+        return effects;
+    }
+
+    public List<Enemy> getEnemiesByDistance(double x, double y) {
+        List<Enemy> sortedEnemies = new ArrayList<>(enemies);
+        sortedEnemies.sort(Comparator.comparingDouble(e -> e.distanceTo(x, y)));
+        return sortedEnemies;
     }
 
     private void fillTiles(String data) {

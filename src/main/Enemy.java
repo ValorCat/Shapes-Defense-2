@@ -11,11 +11,12 @@ public class Enemy {
     private Level level;
     private Tile target;
     private int pathStep;
+    private double progress;
     private Shape visual;
     private Rectangle healthBar;
 
     private EnemyType type;
-    private int health;
+    private double health;
     private double speed;
 
     public Enemy(EnemyType type, Level level) {
@@ -26,7 +27,8 @@ public class Enemy {
         healthBar = type.buildHealthBar();
 
         this.level = level;
-        this.pathStep = 1;
+        pathStep = 1;
+        progress = 0;
         target = level.getPath().get(1);
         Tile start = level.getPath().get(0);
         moveTo(start.getX(), start.getY());
@@ -36,6 +38,7 @@ public class Enemy {
         if (target != null) {
             moveForward(speed);
             visual.setRotate(visual.getRotate() + speed * 2);
+            progress += speed;
         }
     }
 
@@ -43,7 +46,7 @@ public class Enemy {
         return health > 0 || target == null;
     }
 
-    public int damage(int amount) {
+    public double damage(double amount) {
         health -= amount;
         healthBar.setWidth(type.SIZE * health / type.HEALTH);
         if (health <= 0) {
@@ -61,6 +64,10 @@ public class Enemy {
         return y;
     }
 
+    public double getProgress() {
+        return progress;
+    }
+
     public Shape getVisual() {
         return visual;
     }
@@ -69,8 +76,12 @@ public class Enemy {
         return healthBar;
     }
 
+    public double distanceTo(double x, double y) {
+        return Math.hypot(this.x - x, this.y - y);
+    }
+
     private void moveForward(double amount) {
-        double distToTarget = getTargetDistance();
+        double distToTarget = distanceTo(target.getX(), target.getY());
         if (distToTarget <= speed) {
             moveTo(target.getX(), target.getY());
             advanceTarget();
@@ -97,10 +108,6 @@ public class Enemy {
             visual.setLayoutX(x);
             visual.setLayoutY(y);
         }
-    }
-
-    private double getTargetDistance() {
-        return Math.hypot(x - target.getX(), y - target.getY());
     }
 
     private void advanceTarget() {

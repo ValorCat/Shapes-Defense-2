@@ -8,9 +8,9 @@ import main.Level;
 import static main.Level.HEIGHT;
 import static main.Level.WIDTH;
 
-public class TurretRound implements Projectile {
+public class TurretRound implements Effect {
 
-    private static final double SPEED = 0.4;
+    private static final double SPEED = 0.45;
     private static final double RADIUS = 4;
 
     private double x, y, xVelocity, yVelocity;
@@ -35,7 +35,7 @@ public class TurretRound implements Projectile {
             if (target != null) {
                 target.damage(damage);
             }
-            level.clearProjectile(this);
+            level.clearEffect(this);
         }
     }
 

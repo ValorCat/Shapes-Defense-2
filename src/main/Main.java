@@ -11,7 +11,7 @@ import static main.EnemyType.*;
 
 public class Main extends Application {
 
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         InputStream mapData = Main.class.getResourceAsStream("../map.txt");
         Level level = new Level(mapData);
 
@@ -29,9 +29,10 @@ public class Main extends Application {
                 case "`": clock.start(); break;
                 case "1": level.spawnEnemy(GREEN); break;
                 case "2": level.spawnEnemy(BLUE); break;
-                case "3": level.spawnEnemy(GRAY); break;
-                case "4": level.spawnEnemy(RED); break;
+                case "3": level.spawnEnemy(RED); break;
+                case "4": level.spawnEnemy(GRAY); break;
                 case "5": level.spawnEnemy(PURPLE); break;
+                case "6": level.spawnEnemy(ORANGE); break;
             }
         });
 

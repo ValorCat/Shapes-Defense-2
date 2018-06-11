@@ -8,7 +8,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import main.Enemy;
 import main.Level;
-import main.effects.Projectile;
+import main.effects.Effect;
 import main.effects.TurretRound;
 
 import static main.Tile.TILE_SIZE;
@@ -17,7 +17,7 @@ public class TurretTower extends Tower {
 
     private static final int DAMAGE = 8;
     private static final double RANGE = 4 * TILE_SIZE;
-    private static final int COOLDOWN = 35;
+    private static final int COOLDOWN = 30;
 
     private Region head;
     private Enemy target;
@@ -31,14 +31,14 @@ public class TurretTower extends Tower {
 
     public void update() {
         if (cooldown < COOLDOWN) cooldown++;
-        if (target == null || distanceTo(target) > RANGE || !target.isAlive()) {
-            target = getClosestEnemy(RANGE);
+        if (target == null || target.distanceTo(x, y) > RANGE || !target.isAlive()) {
+            target = getFarthestEnemy(RANGE);
         }
         if (target != null) {
             head.setRotate(getRotation(target.getX() - x, target.getY() - y));
             if (cooldown >= COOLDOWN) {
-                Projectile p = new TurretRound(x, y, target.getX() - x, target.getY() - y, DAMAGE, level);
-                level.spawnProjectile(p);
+                Effect e = new TurretRound(x, y, target.getX() - x, target.getY() - y, DAMAGE, level);
+                level.spawnEffect(e);
                 cooldown = 0;
             }
         }

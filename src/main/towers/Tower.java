@@ -8,6 +8,10 @@ import javafx.scene.shape.Shape;
 import main.Enemy;
 import main.Level;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import static main.Tile.TILE_SIZE;
 
 public abstract class Tower {
@@ -27,7 +31,7 @@ public abstract class Tower {
         visual = buildVisual();
         visual.setLayoutX(x - SIZE / 2 - 1);
         visual.setLayoutY(y - SIZE / 2 - 1);
-        visual.setOnMouseEntered(event -> level.render(rangeVisual));
+        visual.setOnMouseEntered(event -> level.renderTop(rangeVisual));
         visual.setOnMouseExited(event -> level.unrender(rangeVisual));
     }
 
@@ -38,21 +42,22 @@ public abstract class Tower {
         return visual;
     }
 
-    protected double distanceTo(Enemy target) {
-        return Math.hypot(target.getX() - x, target.getY() - y);
+    protected Enemy getClosestEnemy(double range) {
+        List<Enemy> enemies = level.getEnemiesByDistance(x, y);
+        if (enemies.get(0).distanceTo(x, y) <= range)
+            return enemies.get(0);
+        return null;
     }
 
-    protected Enemy getClosestEnemy(double range) {
-        Enemy bestTarget = null;
-        double bestDistance = range;
-        for (Enemy enemy : level.getEnemies()) {
-            double distance = distanceTo(enemy);
-            if (distance < bestDistance) {
-                bestTarget = enemy;
-                bestDistance = distance;
+    protected Enemy getFarthestEnemy(double range) {
+        List<Enemy> enemies = new ArrayList<>(level.getEnemies());
+        enemies.sort(Comparator.comparingDouble(enemy -> -enemy.getProgress()));
+        for (Enemy e : enemies) {
+            if (e.distanceTo(x, y) < range) {
+                return e;
             }
         }
-        return bestTarget;
+        return null;
     }
 
     protected Shape buildVisualBase() {

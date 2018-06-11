@@ -15,15 +15,19 @@ public enum EnemyType {
         public Shape buildVisual() {
             return new Rectangle(SIZE, SIZE, Color.MEDIUMBLUE);
         }
-    }, GRAY(60, 3, 0.7, 20) {
+    }, RED(55, 0, 0.8, 18) {
+        public Shape buildVisual() {
+            return new Rectangle(SIZE, SIZE, Color.INDIANRED);
+        }
+    }, GRAY(70, 1, 0.6, 20) {
         public Shape buildVisual() {
             return new Rectangle(SIZE, SIZE, Color.GRAY);
         }
-    }, RED(5, 0, 1.8, 10) {
+    }, ORANGE(5, 0, 2, 10) {
         public Shape buildVisual() {
             return new Circle(SIZE / 2, Color.ORANGERED);
         }
-    }, PURPLE(80, 8, 0.7, 15) {
+    }, PURPLE(100, 3, 0.6, 15) {
         public Shape buildVisual() {
             return new Circle(SIZE / 2, Color.FUCHSIA);
         }

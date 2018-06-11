@@ -8,7 +8,7 @@ import javafx.scene.shape.Shape;
 import main.Enemy;
 import main.Level;
 import main.effects.ExplosiveRound;
-import main.effects.Projectile;
+import main.effects.Effect;
 
 import static main.Tile.TILE_SIZE;
 
@@ -29,12 +29,12 @@ public class BombTower extends Tower {
 
     public void update() {
         if (cooldown < COOLDOWN) cooldown++;
-        if (target == null || distanceTo(target) > RANGE || !target.isAlive()) {
+        if (target == null || target.distanceTo(x, y) > RANGE || !target.isAlive()) {
             target = getClosestEnemy(RANGE);
         }
         if (target != null && cooldown >= COOLDOWN) {
-            Projectile p = new ExplosiveRound(x, y, target.getX(), target.getY(), DAMAGE, level);
-            level.spawnProjectile(p);
+            Effect e = new ExplosiveRound(x, y, target.getX(), target.getY(), DAMAGE, level);
+            level.spawnEffect(e);
             cooldown = 0;
         }
     }

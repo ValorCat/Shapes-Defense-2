@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import static main.Level.HEIGHT;
 import static main.Level.WIDTH;
 
-public class ExplosiveRound implements Projectile {
+public class ExplosiveRound implements Effect {
 
     private static final double SPEED = 0.03;
     private static final double RANGE = 60;
@@ -40,14 +40,14 @@ public class ExplosiveRound implements Projectile {
         move();
         visual.setRotate(visual.getRotate() + SPIN_SPEED);
         if (atTarget() || outOfBounds()) {
-            int damageLeft = damage;
+            double damageLeft = damage;
             List<Entry<Enemy, Double>> targets = getEnemiesInRange();
             for (int i = 0; damageLeft > 0 && i < targets.size(); i++) {
                 Enemy enemy = targets.get(i).getKey();
                 double distance = targets.get(i).getValue();
                 damageLeft = enemy.damage(computeDamage(damageLeft, distance));
             }
-            level.clearProjectile(this);
+            level.clearEffect(this);
         }
     }
 
@@ -55,8 +55,8 @@ public class ExplosiveRound implements Projectile {
         return visual;
     }
 
-    private int computeDamage(int maxDamage, double targetDistance) {
-        return (int) (1 + maxDamage * (1 - targetDistance / RANGE));
+    private double computeDamage(double maxDamage, double targetDistance) {
+        return maxDamage * (1 - targetDistance / RANGE);
     }
 
     private List<Entry<Enemy, Double>> getEnemiesInRange() {

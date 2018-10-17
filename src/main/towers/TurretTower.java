@@ -8,6 +8,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import main.Enemy;
 import main.Level;
+import main.Target;
 import main.effects.Effect;
 import main.effects.TurretRound;
 
@@ -17,7 +18,7 @@ public class TurretTower extends Tower {
 
     private static final int DAMAGE = 8;
     private static final double RANGE = 4 * TILE_SIZE;
-    private static final int COOLDOWN = 30;
+    private static final int COOLDOWN = 25;
 
     private Region head;
     private Enemy target;
@@ -32,7 +33,7 @@ public class TurretTower extends Tower {
     public void update() {
         if (cooldown < COOLDOWN) cooldown++;
         if (target == null || target.distanceTo(x, y) > RANGE || !target.isAlive()) {
-            target = getFarthestEnemy(RANGE);
+            target = Target.from(x, y).within(RANGE).findMax(Enemy::getProgress);
         }
         if (target != null) {
             head.setRotate(getRotation(target.getX() - x, target.getY() - y));

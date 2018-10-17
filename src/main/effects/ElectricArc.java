@@ -6,54 +6,48 @@ import main.Enemy;
 import main.Level;
 import main.Target;
 
-public class LaserBeam implements Effect {
+public class ElectricArc implements Effect {
 
-    private static final int DURATION = 70;
+    private static final int DURATION = 3;
+    private static final double CHAIN_RANGE = 25;
 
     private double x, y;
-    private double damage;
+    private int damage;
+    private int chains;
     private int lifetime;
     private Enemy target;
     private Line visual;
     private Level level;
 
-    public LaserBeam(double x, double y, int damage, Enemy target, Level level) {
+    public ElectricArc(double x, double y, int damage, int chains, Enemy target, Level level) {
         this.x = x;
         this.y = y;
-        this.damage = (double) damage / DURATION;
+        this.damage = damage;
+        this.chains = chains;
         this.lifetime = DURATION;
         this.target = target;
         this.level = level;
         visual = buildVisual(x, y);
+
+        target.damage(damage);
+        if (chains > 0) {
+            double nextX = target.getX();
+            double nextY = target.getY();
+            Enemy nextTarget = Target.from(target).within(CHAIN_RANGE).closest();
+            if (nextTarget != null) {
+                level.spawnEffect(new ElectricArc(nextX, nextY, damage, chains - 1, nextTarget, level));
+            }
+        }
     }
 
     public void update() {
-        if (!target.isAlive() || lifetime <= 0) {
+        if (lifetime-- <= 0) {
             level.clearEffect(this);
-            return;
         }
-        move();
-        target.damage(damage);
-        double damageLeft = damage;
-        for (Enemy enemy : Target.from(x, y).findAllByDistance()) {
-            if (enemy.collidesWith(visual)) {
-                damageLeft = enemy.damage(damageLeft);
-                if (damageLeft <= 0) {
-                    blockLaser(enemy.distanceTo(x, y));
-                    break;
-                }
-            }
-        }
-        lifetime--;
     }
 
     public Line getVisual() {
         return visual;
-    }
-
-    private void move() {
-        visual.setEndX(target.getX());
-        visual.setEndY(target.getY());
     }
 
     private void blockLaser(double distance) {
@@ -64,8 +58,8 @@ public class LaserBeam implements Effect {
 
     private Line buildVisual(double x, double y) {
         Line l = new Line(x, y, target.getX(), target.getY());
-        l.setStroke(Color.RED);
-        l.setStrokeWidth(2.5);
+        l.setStroke(Color.CORNFLOWERBLUE);
+        l.setStrokeWidth(1.5);
         return l;
     }
 

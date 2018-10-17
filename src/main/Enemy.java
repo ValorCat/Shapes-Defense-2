@@ -1,5 +1,6 @@
 package main;
 
+import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
@@ -68,6 +69,10 @@ public class Enemy {
         return progress;
     }
 
+    public double getHealth() {
+        return health;
+    }
+
     public Shape getVisual() {
         return visual;
     }
@@ -78,6 +83,10 @@ public class Enemy {
 
     public double distanceTo(double x, double y) {
         return Math.hypot(this.x - x, this.y - y);
+    }
+
+    public boolean collidesWith(Node other) {
+        return visual.getBoundsInParent().intersects(other.getBoundsInParent());
     }
 
     private void moveForward(double amount) {

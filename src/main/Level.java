@@ -8,7 +8,9 @@ import main.effects.Effect;
 import main.towers.Tower;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static main.Tile.TILE_SIZE;
@@ -43,6 +45,8 @@ public class Level {
         towers = new CopyOnWriteArrayList<>();
         enemies = new CopyOnWriteArrayList<>();
         effects = new CopyOnWriteArrayList<>();
+
+        Target.setEnemies(enemies);
     }
 
     public void update() {
@@ -86,14 +90,14 @@ public class Level {
         unrender(e.getHealthBar());
     }
 
-    public void spawnEffect(Effect p) {
-        effects.add(p);
-        renderBottom(p.getVisual());
+    public void spawnEffect(Effect e) {
+        effects.add(e);
+        renderBottom(e.getVisual());
     }
 
-    public void clearEffect(Effect p) {
-        effects.remove(p);
-        unrender(p.getVisual());
+    public void clearEffect(Effect e) {
+        effects.remove(e);
+        unrender(e.getVisual());
     }
 
     public Pane getGameArea() {
@@ -110,12 +114,6 @@ public class Level {
 
     public List<Effect> getEffects() {
         return effects;
-    }
-
-    public List<Enemy> getEnemiesByDistance(double x, double y) {
-        List<Enemy> sortedEnemies = new ArrayList<>(enemies);
-        sortedEnemies.sort(Comparator.comparingDouble(e -> e.distanceTo(x, y)));
-        return sortedEnemies;
     }
 
     private void fillTiles(String data) {

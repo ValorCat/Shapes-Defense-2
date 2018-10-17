@@ -4,10 +4,7 @@ import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.shape.Rectangle;
-import main.towers.BombTower;
-import main.towers.LaserTower;
-import main.towers.Tower;
-import main.towers.TurretTower;
+import main.towers.*;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -36,7 +33,8 @@ public class Tile {
         visual.getStyleClass().add(style + "-tile");
 
         ContextMenu menu = new ContextMenu();
-        for (Class<? extends Tower> t : new Class[] {TurretTower.class, BombTower.class, LaserTower.class}) {
+        for (Class<? extends Tower> t : new Class[] {
+                TurretTower.class, BombTower.class, LaserTower.class, ShockTower.class}) {
             MenuItem item = new MenuItem(t.getSimpleName());
             item.setOnAction(event -> {
                 try {

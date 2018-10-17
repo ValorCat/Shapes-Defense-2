@@ -7,16 +7,17 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import main.Enemy;
 import main.Level;
-import main.effects.ExplosiveRound;
+import main.Target;
 import main.effects.Effect;
+import main.effects.ExplosiveRound;
 
 import static main.Tile.TILE_SIZE;
 
 public class BombTower extends Tower {
 
     private static final int DAMAGE = 15;
-    private static final double RANGE = 3 * TILE_SIZE;
-    private static final int COOLDOWN = 90;
+    private static final double RANGE = 2.5 * TILE_SIZE;
+    private static final int COOLDOWN = 100;
 
     private Enemy target;
     private int cooldown;
@@ -30,7 +31,7 @@ public class BombTower extends Tower {
     public void update() {
         if (cooldown < COOLDOWN) cooldown++;
         if (target == null || target.distanceTo(x, y) > RANGE || !target.isAlive()) {
-            target = getClosestEnemy(RANGE);
+            target = Target.from(x, y).within(RANGE).findMax(Enemy::getHealth);
         }
         if (target != null && cooldown >= COOLDOWN) {
             Effect e = new ExplosiveRound(x, y, target.getX(), target.getY(), DAMAGE, level);
